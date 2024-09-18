@@ -69,7 +69,7 @@ Installing
 Running Demo(s)
 ---------------
 
-1. Download high-resolution images from [data](https://engineering.purdue.edu/~bouman/data_repository/data/jax_lab_data.tgz) and decompress it in the main folder.
+1. Download high-resolution images from [data](https://engineering.purdue.edu/~bouman/data_repository/data/jax_lab_data.tgz) and decompress it in the demo/data folder of the repository using the following commands.
 
     .. code-block::
 
@@ -78,7 +78,7 @@ Running Demo(s)
         tar -xvf jax_lab_data.tgz
         rm jax_lab_data.tgz
 
-2. Run FIR filtering over the high-resolution image(you can use your own images) as something like the following:
+2. Run FIR filtering over the high-resolution image (you can use your own images) as something like the following:
 
     .. code-block::
 

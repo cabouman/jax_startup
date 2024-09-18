@@ -9,7 +9,7 @@ if [ "$CONDA_DEFAULT_ENV"==$NAME ]; then
 fi
 
 conda remove env --name $NAME --all
-conda create --name $NAME python=3.10
+yes | conda create --name $NAME python=3.10
 conda activate $NAME
 
 echo

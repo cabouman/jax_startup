@@ -46,10 +46,6 @@ reset=`tput sgr0`
 
 echo " "
 echo "Use"
-echo "${red}   source get_demo_data_server.sh   ${reset}"
-echo "to download data needed for demos"
-echo " "
-echo "Use"
 echo "${red}   conda activate jax_startup   ${reset}"
 echo "to activate the conda environment."
 echo " "
