@@ -10,7 +10,7 @@ import jax
 from jax import lax
 from jax import numpy as jnp
 
-def gaussian_kernal(P, sigma=1.0):
+def gaussian_kernel(P, sigma=1.0):
     """
     Generates an (2P+1) x (2P+1) Gaussian kernel.
 
@@ -19,8 +19,8 @@ def gaussian_kernal(P, sigma=1.0):
 
     Parameters
     ----------
-    N : int
-        The size (width and height) of the output Gaussian kernel. It determines the diameter of the filter.
+    P : int
+        The radius of the output Gaussian kernel.
     sigma : float, optional
         The standard deviation of the Gaussian distribution. It controls the spread or width of the Gaussian function. Defaults to 1.0.
 
@@ -63,10 +63,10 @@ def dist_kernel(P):
     kernel = np.where(kernel != 0, 1.0/kernel, kernel)
     return kernel / kernel.sum()
 
-# Numpy filtering
+
 def FIR_filter_np(image, kernel):
     """
-    NumPy implementatin of an FIR filter to an image using zero-padding with "same" boundary condition.
+    Numpy implementation of an FIR filter to an image using zero-padding with "same" boundary condition.
 
     This function applies an FIR filter(implemented by NumPy) with given kernel to an input grayscale image using convolution.
     The kernel is slid over the image to calculate the sum of the element-wise multiplication
@@ -88,6 +88,9 @@ def FIR_filter_np(image, kernel):
     # Determine value of P so that kernel is (2P+1)x(2P+1)
     P = kernel.shape[0] // 2
 
+    # Flip the kernel for convolution
+    kernel = np.flipud(np.fliplr(kernel))
+
     # Initialize output array with zeros, same shape as input image
     output = np.zeros_like(image)
 
@@ -108,8 +111,8 @@ def FIR_filter_np(image, kernel):
     return output
 
 
-# Jax vmap filtering
-def FIR_filter_jax(image, kernal, map_method='vmap'):
+
+def FIR_filter_jax(image, kernel, map_method='vmap'):
     """
     Applies a filter to an image using JAX.
 
@@ -119,34 +122,33 @@ def FIR_filter_jax(image, kernal, map_method='vmap'):
 
     Parameters
     ----------
-    image : numpy.ndarray
+    image : JAX array
         The input grayscale image to which the filter is to be applied.
-    kernal : numpy.ndarray
-        The kernal to be applied on the image.
+    kernel : JAX array
+        The kernel to be applied on the image.
 
     Returns
     -------
-    numpy.ndarray
+    JAX array
         The filtered image after applying the filter.
     """
 
-    # Convert input image and kernal to JAX arrays
-    image = jnp.array(image)
-    kernal = jnp.array(kernal)
+    # Store shape of kernel for later use in convolution
+    kernel_shape = kernel.shape
 
-    # Store shape of kernal for later use in convolution
-    kernal_shape = kernal.shape
+    # Flip the kernel for convolution
+    kernel = jnp.flipud(jnp.fliplr(kernel))
 
     # Pad the input image to handle edges during convolution
-    pad_image = jnp.pad(image, [(kernal_shape[0] // 2, kernal_shape[0] // 2), (kernal_shape[1] // 2, kernal_shape[1] // 2)],
+    pad_image = jnp.pad(image, [(kernel_shape[0] // 2, kernel_shape[0] // 2), (kernel_shape[1] // 2, kernel_shape[1] // 2)],
                         mode='constant')
 
     def conv_at_ij(i, j):
         # Extract patch from padded image at position (i, j)
-        patch = lax.dynamic_slice(pad_image, (i, j), kernal_shape)
+        patch = lax.dynamic_slice(pad_image, (i, j), kernel_shape)
 
         # Return sum of element-wise multiplication of patch and filter
-        return jnp.sum(patch * kernal)
+        return jnp.sum(patch * kernel)
 
     # Create meshgrid of indices for input image
     I, J = np.meshgrid(np.arange(image.shape[0]),
@@ -170,4 +172,24 @@ def FIR_filter_jax(image, kernal, map_method='vmap'):
     else:
         raise ValueError('map_method should be \'vmap\' or \'pmap\'')
     # Apply convolution function to each position in the image and reshape output to original image shape
+
     return result
+
+def FIR_filter_jax_builtin(image, kernel):
+    """
+    Applies a filter to an image using JAX's built-in convolution function.
+
+    Parameters
+    ----------
+    image : JAX array
+        The input grayscale image to which the filter is to be applied.
+    kernel : JAX array
+        The kernel to be applied on the image.
+
+    Returns
+    -------
+    JAX array
+        The filtered image after applying the filter.
+    """
+    filtered_image = jax.scipy.signal.convolve2d(image, kernel, mode='same')
+    return filtered_image
