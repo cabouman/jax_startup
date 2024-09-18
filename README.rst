@@ -69,9 +69,18 @@ Installing
 Running Demo(s)
 ---------------
 
-Run any of the available demo scripts with something like the following:
+1. Download high-resolution images from [data](https://engineering.purdue.edu/~bouman/data_repository/data/jax_lab_data.tgz) and decompress it in the demo/data folder of the repository using the following commands.
 
     .. code-block::
 
-        python demo/<demo_file>.py
+        cd demo
+        curl https://engineering.purdue.edu/~bouman/data_repository/data/jax_lab_data.tgz -s -o jax_lab_data.tgz
+        tar -xvf jax_lab_data.tgz
+        rm jax_lab_data.tgz
+
+2. Run FIR filtering over the high-resolution image (you can use your own images) as something like the following:
+
+    .. code-block::
+
+        python FIR.py data/mountains_small.jpeg
 
