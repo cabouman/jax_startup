@@ -25,6 +25,8 @@ Installing
 
 2. Install the conda environment and package
 
+It is recommended to use Option 1 to install the environment if you are using Linux or macOS. If you are using Windows, you can only install the environment using Option 2.
+
     a. Option 1: Clean install from dev_scripts
 
         *******You can skip all other steps if you do a clean install.******
