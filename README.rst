@@ -13,6 +13,10 @@ helps get started with JAX
 
 Installing
 ----------
+0. *For MacOS users with M1/M2/M3 computers:*
+
+    In order to use JAX, you must install the newest version of Anaconda for the arm64 architecture from <a href="https://www.anaconda.com/products/individual#Downloads">here</a>.
+
 1. *Clone or download the repository:*
 
     .. code-block::
